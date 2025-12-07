@@ -58,3 +58,33 @@ s$ps <- probability_forest(X = s[, covar],
 match.out <- matchit(tr ~ ps, ratio = 1, data = s, replace = FALSE)
 s2 <- s[which(match.out$weights == 1), ]
 table(s2$tr)
+
+pdf("graphs/irs/irs1_odds.pdf", width = 5.5, height = 5.5)
+plot_hist(s, "ps", "tr", breaks = 30, odds = TRUE, xlim = c(-5.5, 1), ylim = c(-0.4, 0.4))
+graphics.off()
+
+
+
+pdf("graphs/irs/irs1_odds_trim.pdf", width = 5.5, height = 5.5)
+s2$ps <- probability_forest(X = s2[, covar], 
+                            Y = as.factor(s2$tr), seed = 1234)$predictions[,2]
+plot_hist(s2, "ps", "tr", breaks = 30, odds = TRUE, xlim = c(-1, 1), ylim = c(-0.4, 0.4))
+graphics.off()
+
+
+## PS
+
+pdf("graphs/irs/irs1_ps.pdf", width = 5.5, height = 5.5)
+s$ps <- probability_forest(X = s[, covar], 
+                           Y = as.factor(s$tr), seed = 1234)$predictions[,2]
+plot_hist(s, "ps", "tr", breaks = 30, odds = FALSE, xlim = c(0, 1), ylim = c(-0.4, 0.4))
+graphics.off()
+
+pdf("graphs/irs/irs1_ps_trim.pdf", width = 5.5, height = 5.5)
+s2$ps <- probability_forest(X = s2[, covar], 
+                            Y = as.factor(s2$tr), seed = 1234)$predictions[,2]
+plot_hist(s2, "ps", "tr", breaks = 30, odds = FALSE, xlim = c(0, 1), ylim = c(-0.4, 0.4))
+graphics.off()
+
+
+
