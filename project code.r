@@ -277,3 +277,15 @@ att <- rep(NA, ntr)
 
 ### ----- initialization of Processed data-----
 
+for (i in 1:length(outcomes)) {
+  Y <- outcomes[i]
+  catt.out <- catt(data, Y, treat, covar)
+  tau[, i] <- catt.out$catt
+  att[i] <- catt.out$att[1]     
+  cat(i, "\n")
+}
+
+### ----- estimation of the CATT/ATT after processing -----
+
+
+
