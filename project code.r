@@ -303,3 +303,9 @@ for (i in 4:length(outcomes)) {
 graphics.off()
 
 ### ----- Visualized CATT distribution (density plot + ATT points) after processing -----
+
+covar <- c("tixbot", "male", "workthen", "agew", "educ", "college", 
+           "xearn.1", "xearn.2", "xearn.3")
+
+### ----- Definition of Covariates -----
+### ----- End of Code Added by Guanbing Li -----
