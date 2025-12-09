@@ -231,3 +231,14 @@ write.csv(irs_first_outcome_CT, "irs_first_outcome_CT.csv", row.names = FALSE)
 library("grf")
 
 ### ----- install GRF package -----
+
+
+## Original Data
+data <- s
+treat <- "tr"
+ntr <- sum(data[, treat] == 1)
+tau <- matrix(NA, ntr, length(outcomes))
+att <- rep(NA, ntr)
+
+### ----- initialization of data-----
+
