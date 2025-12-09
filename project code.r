@@ -268,3 +268,12 @@ for (i in 4:length(outcomes)) {
 graphics.off()
 
 ### ----- Visualized CATT distribution (density plot + ATT points) -----
+
+data <- s2
+treat <- "tr"
+ntr <- sum(data[, treat] == 1)
+tau <- matrix(NA, ntr, length(outcomes))
+att <- rep(NA, ntr)
+
+### ----- initialization of Processed data-----
+
