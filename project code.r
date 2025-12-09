@@ -252,3 +252,19 @@ for (i in 1:length(outcomes)) {
 
 ### ----- estimation of the CATT/ATT -----
 
+pdf("graphs/irs/irs1_catt.pdf", width = 7, height = 5)
+par(mar = c(4, 4, 1, 2))
+plot(1, xlim = c(3.7, 13.3), ylim = c(-20, 10), type = "n", axes = FALSE, 
+     ylab = "Effects on Earnings (thousand USD)", xlab = "Year Relative to Winning")
+box(); axis(2)
+axis(1, at = 4:13, labels = c(-3:6))
+abline(h = 0, v= 6.5, col = "gray60", lty = 2, lwd = 1.5)
+for (i in 4:length(outcomes)) {
+  dens <- density(tau[,i], bw = 0.5)
+  polygon(i + dens$y, dens$x, col = "#AAAAAA50", border = NA)
+  lines(i + dens$y, dens$x, lwd = 1) 
+  points(i+0.01,  att[i], pch = 16, cex = 0.8)  # Coef
+}
+graphics.off()
+
+### ----- Visualized CATT distribution (density plot + ATT points) -----
