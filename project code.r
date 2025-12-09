@@ -149,6 +149,9 @@ if (!dir.exists("output")) dir.create("output", recursive = TRUE)
 
 save(s, s2, match.out, att_lm, att_lm_cov,
      file = "output/irs_matching_results.RData")
+
+
+
 covar <- c("tixbot", "male", "workthen", "agew", "educ", "college", 
            "xearn.1", "xearn.2", "xearn.3", "yearw")
 
