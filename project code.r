@@ -227,3 +227,7 @@ irs_first_outcome_CT <- as.data.frame(est[[1]])
 write.csv(irs_first_outcome_CT, "irs_first_outcome_CT.csv", row.names = FALSE)
 
 ### ----- End of code added by Chuanlong Tian -----
+
+library("grf")
+
+### ----- install GRF package -----
