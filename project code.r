@@ -58,3 +58,94 @@ s$ps <- probability_forest(X = s[, covar],
 match.out <- matchit(tr ~ ps, ratio = 1, data = s, replace = FALSE)
 s2 <- s[which(match.out$weights == 1), ]
 table(s2$tr)
+############################################################
+## Code for figures (screenshot part) + extensions
+############################################################
+
+## Propensity score log-odds distribution (before matching)
+pdf("graphs/irs/irs1_odds.pdf", width = 5.5, height = 5.5)
+plot_hist(s, "ps", "tr",
+          breaks = 30, odds = TRUE,
+          xlim = c(-5.5, 1), ylim = c(-0.4, 0.4))
+graphics.off()
+
+## Propensity score log-odds distribution (matched / trimmed sample)
+pdf("graphs/irs/irs1_odds_trim.pdf", width = 5.5, height = 5.5)
+s2$ps <- probability_forest(X = s2[, covar],
+                            Y = as.factor(s2$tr), seed = 1234)$predictions[,2]
+plot_hist(s2, "ps", "tr",
+          breaks = 30, odds = TRUE,
+          xlim = c(-1, 1), ylim = c(-0.4, 0.4))
+graphics.off()
+
+## PS
+
+## PS distribution (before matching)
+pdf("graphs/irs/irs1_ps.pdf", width = 5.5, height = 5.5)
+s$ps <- probability_forest(X = s[, covar],
+                           Y = as.factor(s$tr), seed = 1234)$predictions[,2]
+plot_hist(s, "ps", "tr",
+          breaks = 30, odds = FALSE,
+          xlim = c(0, 1), ylim = c(-0.4, 0.4))
+graphics.off()
+
+## PS distribution (matched / trimmed sample)
+pdf("graphs/irs/irs1_ps_trim.pdf", width = 5.5, height = 5.5)
+s2$ps <- probability_forest(X = s2[, covar],
+                            Y = as.factor(s2$tr), seed = 1234)$predictions[,2]
+plot_hist(s2, "ps", "tr",
+          breaks = 30, odds = FALSE,
+          xlim = c(0, 1), ylim = c(-0.4, 0.4))
+graphics.off()
+
+
+
+############################################################
+## Extensions: covariate balance diagnostics + treatment effect
+############################################################
+
+## 1. Covariate balance: standardized mean differences before/after matching
+sum_m <- summary(match.out, standardize = TRUE)
+print(sum_m)  # quick check of overall balance in the console
+
+## Put before/after SMDs into a data frame and plot with ggplot
+bal_tab <- as.data.frame(sum_m$sum.all[, "Std. Mean Diff."])
+bal_tab$var <- rownames(bal_tab)
+bal_tab$after <- sum_m$sum.matched[, "Std. Mean Diff."]
+
+colnames(bal_tab) <- c("before", "var", "after")
+
+bal_long <- bal_tab %>%
+  pivot_longer(cols = c("before", "after"),
+               names_to = "stage", values_to = "smd")
+
+ggplot(bal_long,
+       aes(x = smd, y = reorder(var, smd), shape = stage)) +
+  geom_point(size = 2) +
+  geom_vline(xintercept = c(-0.1, 0, 0.1), linetype = "dashed") +
+  labs(x = "Standardized mean difference",
+       y = NULL,
+       shape = NULL) +
+  theme_bw()
+
+ggsave("graphs/irs/irs1_balance_smd.pdf",
+       width = 6, height = 5)
+
+
+## 2. Treatment effect estimation on matched sample (outcome: yearn.avg)
+
+# ATT estimate with only the treatment indicator
+att_lm <- lm(yearn.avg ~ tr, data = s2)
+summary(att_lm)
+
+# Add covariate controls for a more robust regression
+att_lm_cov <- lm(yearn.avg ~ tr + tixbot + male + workthen + agew + educ +
+                   college + xearn.1 + xearn.2 + xearn.3 + yearw,
+                 data = s2)
+summary(att_lm_cov)
+
+## 3. Save key objects for later analysis/plotting
+if (!dir.exists("output")) dir.create("output", recursive = TRUE)
+
+save(s, s2, match.out, att_lm, att_lm_cov,
+     file = "output/irs_matching_results.RData")
