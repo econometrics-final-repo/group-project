@@ -341,3 +341,143 @@ covar <- c("tixbot", "male", "workthen", "agew", "educ", "college",
 ### ----- Definition of Covariates -----
 ### ----- End of Code Added by Guanbing Li -----
 >>>>>>> 46e8777e087652cf792a83fe8e6ae4e8bbe6ec70
+
+# Assumes: est_qte(), plot_qte(), and objects s, s2, treat, covar exist
+
+qte.irs.pre.unadj       <- est_qte("xearn.avg",  treat, NULL,   data = s)
+qte.irs.pst.unadj       <- est_qte("yearn.avg",  treat, NULL,   data = s)
+qte.irs.pre.trim.unadj  <- est_qte("xearn.avg",  treat, NULL,   data = s2)
+qte.irs.pst.trim.unadj  <- est_qte("yearn.avg",  treat, NULL,   data = s2)
+
+qte.irs.pre.adj         <- est_qte("xearn.avg",  treat, covar,  data = s)
+qte.irs.pst.adj         <- est_qte("yearn.avg",  treat, covar,  data = s)
+qte.irs.pre.trim.adj    <- est_qte("xearn.avg",  treat, covar,  data = s2)
+qte.irs.pst.trim.adj    <- est_qte("yearn.avg",  treat, covar,  data = s2)
+
+save(
+  qte.irs.pre.unadj, qte.irs.pst.unadj,
+  qte.irs.pre.trim.unadj, qte.irs.pst.trim.unadj,
+  qte.irs.pre.adj, qte.irs.pst.adj,
+  qte.irs.pre.trim.adj, qte.irs.pst.trim.adj,
+  file = "output/qte_irs1.rds"
+)
+
+####################
+# Plot QTE
+####################
+
+load("output/qte_irs1.rds")
+
+ylim <- c(-60, 60)
+
+make_qte_plot <- function(qte_adj, qte_unadj, file, main) {
+  pdf(file, width = 6, height = 5)
+  plot_qte(
+    qte_adj,
+    qte_unadj,
+    ylim = ylim,
+    main = main
+  )
+  legend(
+    "bottomleft",
+    legend = c("Unadjusted", "Adjusted"),
+    lty = 1,
+    pch = c(17, 16),
+    col = c(2, 1),
+    bty = "n"
+  )
+  dev.off()
+}
+
+make_qte_plot(
+  qte_adj   = qte.irs.pre.adj,
+  qte_unadj = qte.irs.pre.unadj,
+  file      = "graphs/irs/irs1_qte_pre.pdf",
+  main      = "Pre-Winning Avg. Earning (Full Sample)"
+)
+
+make_qte_plot(
+  qte_adj   = qte.irs.pst.adj,
+  qte_unadj = qte.irs.pst.unadj,
+  file      = "graphs/irs/irs1_qte_pst.pdf",
+  main      = "Post-Winning Avg. Earning (Full Sample)"
+)
+
+make_qte_plot(
+  qte_adj   = qte.irs.pre.trim.adj,
+  qte_unadj = qte.irs.pre.trim.unadj,
+  file      = "graphs/irs/irs1_qte_pre_trim.pdf",
+  main      = "Pre-Winning Avg. Earning (Trimmed)"
+)
+
+make_qte_plot(
+  qte_adj   = qte.irs.pst.trim.adj,
+  qte_unadj = qte.irs.pst.trim.unadj,
+  file      = "graphs/irs/irs1_qte_pst_trim.pdf",
+  main      = "Post-Winning Avg. Earning (Trimmed)"
+)
+
+pdf("graphs/irs/irs1_qte_all4.pdf", width = 8, height = 8)
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1))
+
+plot_qte(
+  qte.irs.pre.adj,
+  qte.irs.pre.unadj,
+  ylim = ylim,
+  main = "Pre (Full Sample)"
+)
+legend(
+  "bottomleft",
+  legend = c("Unadjusted", "Adjusted"),
+  lty = 1,
+  pch = c(17, 16),
+  col = c(2, 1),
+  bty = "n"
+)
+
+plot_qte(
+  qte.irs.pst.adj,
+  qte.irs.pst.unadj,
+  ylim = ylim,
+  main = "Post (Full Sample)"
+)
+legend(
+  "bottomleft",
+  legend = c("Unadjusted", "Adjusted"),
+  lty = 1,
+  pch = c(17, 16),
+  col = c(2, 1),
+  bty = "n"
+)
+
+plot_qte(
+  qte.irs.pre.trim.adj,
+  qte.irs.pre.trim.unadj,
+  ylim = ylim,
+  main = "Pre (Trimmed)"
+)
+legend(
+  "bottomleft",
+  legend = c("Unadjusted", "Adjusted"),
+  lty = 1,
+  pch = c(17, 16),
+  col = c(2, 1),
+  bty = "n"
+)
+
+plot_qte(
+  qte.irs.pst.trim.adj,
+  qte.irs.pst.trim.unadj,
+  ylim = ylim,
+  main = "Post (Trimmed)"
+)
+legend(
+  "bottomleft",
+  legend = c("Unadjusted", "Adjusted"),
+  lty = 1,
+  pch = c(17, 16),
+  col = c(2, 1),
+  bty = "n"
+)
+
+dev.off()
