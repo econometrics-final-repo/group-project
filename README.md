@@ -1,7 +1,4 @@
 # Ruijia Wu
-<<<<<<< HEAD
-# I am the starter of the project
-=======
 # I am the starter of the program
 
 >>>>>>> d1cae56 (Ruijia Wu Read Me)
