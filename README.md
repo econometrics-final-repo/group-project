@@ -1,7 +1,5 @@
 # Ruijia Wu
 # I am the starter of the program
-
->>>>>>> d1cae56 (Ruijia Wu Read Me)
 This code prepares and analyzes data from a lottery experiment to study the causal effects of winning the lottery on later outcomes. It begins by loading required R packages and importing the dataset. After inspecting the structure of the data, the script constructs treatment indicators that classify individuals into big winners, small winners, and controls. It also creates a binary variable for college education.
 
 Next, the code subsets the data to compare big winners with the control group (or alternatively small winners vs. controls). It computes average pre-treatment and post-treatment earnings measures to use as covariates.
